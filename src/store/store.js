@@ -16,6 +16,10 @@ export default new Vuex.Store({
     getters: {
         token: state => state.jwt_token,
         auth_header: state => 'Bearer ' + state.jwt_token,
-        show_search: state => state.show_search
+        show_search: state => state.show_search,
+        api_base: () => 'http://localhost:8000/api/v1/'
+    },
+    actions: {
+        // LOGIN/LOGOUT TODO
     }
 });

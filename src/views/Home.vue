@@ -6,7 +6,7 @@
                     IPFS SHARE
                 </div>
                 <div>
-                    <input class="w-50 mt-4" title="Rechercer un fichier IPFS" autofocus/>
+                    <input class="w-50 mt-4" title="Rechercer un fichier IPFS" autofocus @change="onSubmit"/>
                 </div>
             </div>
         </div>
@@ -22,6 +22,13 @@
 
 <script>
     export default {
-        name: 'home'
+        name: 'home',
+        methods: {
+            onSubmit: function (event) {
+                const value = event.target.value;
+                if (value)
+                    this.$router.push({path: '/search', query: {q: value}})
+            }
+        }
     }
 </script>

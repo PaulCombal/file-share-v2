@@ -4,7 +4,21 @@ import router from './router'
 import store from './store/store'
 import './registerServiceWorker'
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
+
+Vue.mixin({
+    methods: {
+        post: function (path, postdata = {}) {
+            const init = {
+                method: 'POST',
+                mode: 'cors',
+                headers: (new Headers()).append('Authorization', this.$store.getters.auth_header),
+                body: JSON.stringify(postdata)
+            };
+            return fetch(this.$store.getters.api_base + path, init);
+        }
+    }
+});
 
 new Vue({
   router,

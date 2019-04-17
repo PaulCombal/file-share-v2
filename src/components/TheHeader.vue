@@ -6,7 +6,7 @@
             </router-link>
         </div>
 
-        <div class="flex-1" v-if="$store.show_search">
+        <div class="flex-1" v-if="$store.getters.show_search">
             <input class="header-input" placeholder="Recherche rapide.."/>
         </div>
 
