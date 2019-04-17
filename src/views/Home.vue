@@ -1,18 +1,27 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <div class="container">
+        <div class="row">
+            <div class="col text-center mt-4">
+                <div class="title">
+                    IPFS SHARE
+                </div>
+                <div>
+                    <input class="w-50 mt-4" title="Rechercer un fichier IPFS" autofocus/>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
-<script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+<style scoped>
+    .title {
+        font-family: 'Francois One', monospace;
+        font-size: xx-large;
+    }
+</style>
 
-export default {
-  name: 'home',
-  components: {
-    HelloWorld
-  }
-}
+<script>
+    export default {
+        name: 'home'
+    }
 </script>
