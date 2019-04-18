@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Search from './views/Search.vue'
+import ShowSubmission from './views/ShowSubmission'
+import ShowUser from './views/ShowUser'
 
 Vue.use(Router);
 
@@ -18,6 +20,16 @@ export default new Router({
             path: '/search',
             name: 'search',
             component: Search
+        },
+        {
+            path: '/:id/:slug',
+            name: 'show_submission',
+            component: ShowSubmission
+        },
+        {
+            path: '/u/:username',
+            name: 'show_user',
+            component: ShowUser
         },
         {
             path: '/about',

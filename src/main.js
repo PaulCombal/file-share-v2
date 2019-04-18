@@ -22,6 +22,24 @@ Vue.mixin({
                     }
                     return r.json();
                 });
+        },
+        readableCategories: function (category, parent_category = null) {
+            let ret = '';
+            if (category !== parent_category && parent_category !== null) {
+                let cat = this.$store.getters.categories.find(x => x.id === parent_category);
+                if (cat)
+                    ret += cat.name + ' / ';
+                else
+                    ret += '??? / ';
+            }
+
+            let cat = this.$store.getters.categories.find(x => x.id === category);
+            if (cat)
+                ret += cat.name;
+            else
+                ret += '???';
+
+            return ret;
         }
     }
 });

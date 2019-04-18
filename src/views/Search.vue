@@ -29,8 +29,7 @@
                     <i class="fa fa-circle-notch fa-spin"></i>
                 </div>
                 <div v-if="!loading && error" class="text-center">
-                    <i class="fa fa-exclamation-triangle mr-1"></i> Une erreur est survenue.. Veuillez réessayer plus
-                    tard.
+                    <i class="fa fa-exclamation-triangle mr-1"></i> Une erreur est survenue.. Veuillez réessayer plus tard.
                 </div>
                 <div v-if="!loading && !error">
                     <div v-if="results.length === 0" class="text-center text-muted">
@@ -46,7 +45,7 @@
                         </div>
                         <div class="text-muted-muted">
                             <small>
-                                <strong>{{ r.karma || '??' }}</strong> karma - {{ readableCategories(r.category, r.parent_category) }}
+                                <strong>{{ r.karma || '??' }}</strong> karma - Dans {{ readableCategories(r.category, r.parent_category) }}
                             </small>
                         </div>
                     </div>
@@ -70,24 +69,6 @@
             };
         },
         methods: {
-            readableCategories: function (category, parent_category) {
-                let ret = 'Dans '
-                if (category !== parent_category) {
-                    let cat = this.$store.getters.categories.find(x => x.id === parent_category);
-                    if (cat)
-                        ret += cat.name + ' / ';
-                    else
-                        ret += '??? / ';
-                }
-
-                let cat = this.$store.getters.categories.find(x => x.id === category);
-                if (cat)
-                    ret += cat.name;
-                else
-                    ret += '???';
-
-                return ret;
-            },
             doSearch: function () {
                 const query = this.query;
                 const category = this.category;
