@@ -11,7 +11,7 @@
     }
 
     #app {
-        margin-top: 50px;
+        margin-top: 50px; // header height
     }
 </style>
 
@@ -19,6 +19,11 @@
     import TheHeader from "./components/TheHeader";
 
     export default {
-        components: {TheHeader}
+        components: {TheHeader},
+        mounted: function () {
+            this.post('category/read').then((r) => {
+                this.$store.commit('setCategories', r.categories);
+            })
+        }
     }
 </script>

@@ -15,7 +15,13 @@ Vue.mixin({
                 headers: (new Headers()).append('Authorization', this.$store.getters.auth_header),
                 body: JSON.stringify(postdata)
             };
-            return fetch(this.$store.getters.api_base + path, init);
+            return fetch(this.$store.getters.api_base + path, init)
+                .then((r) => {
+                    if (!r.ok) {
+                        throw new Error(r.statusText);
+                    }
+                    return r.json();
+                });
         }
     }
 });
