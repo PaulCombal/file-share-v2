@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col">
                 <div>
-                    <input :value="$route.query.q" placeholder="Rechercher.." class="w-100 my-2"/>
+                    <input v-model="query" placeholder="Rechercher.." class="w-100 my-2" @change="doSearch()"/>
                 </div>
                 <div class="d-flex align-items-center mt-2">
                     <div style="flex: 1;">
@@ -89,12 +89,20 @@
                 return ret;
             },
             doSearch: function () {
-                this.loading = true;
-                this.error = false;
-
                 const query = this.query;
                 const category = this.category;
                 const verifiedOnly = this.verifiedOnly;
+
+                if (!query || query.length === 0) return;
+
+                this.loading = true;
+                this.error = false;
+
+                if (query !== this.$route.query.q || category !== this.$route.query.category || verifiedOnly !== this.$route.query.verifiedOnly) {
+                    this.$router.push({path: '/search', query: {q: query, category, verifiedOnly}});
+                    this.doSearch();
+                    return;
+                }
 
                 const postdata = {
                     query,
