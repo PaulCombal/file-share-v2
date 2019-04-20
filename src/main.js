@@ -9,10 +9,13 @@ Vue.config.productionTip = false;
 Vue.mixin({
     methods: {
         post: function (path, postdata = {}) {
+            let headers = new Headers();
+            headers.append('Authorization', this.$store.getters.auth_header);
+
             const init = {
                 method: 'POST',
                 mode: 'cors',
-                headers: (new Headers()).append('Authorization', this.$store.getters.auth_header),
+                headers,
                 body: JSON.stringify(postdata)
             };
             return fetch(this.$store.getters.api_base + path, init)

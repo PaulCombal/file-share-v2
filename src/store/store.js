@@ -56,16 +56,31 @@ export default new Vuex.Store({
             ;
         },
         updateUserProfile({commit, getters}) {
+            let headers = new Headers();
+            headers.append('Authorization', getters.auth_header);
             const init = {
                 method: 'POST',
                 mode: 'cors',
-                headers: (new Headers()).append('Authorization', getters.auth_header)
+                headers
             };
 
-            return fetch(getters.api_base + 'profiles/readmine', init)
+            return fetch(getters.api_base + 'profile/readmine', init)
+                .then((r) => {
+                    if (r.status === 401) {
+                        // JWT is not valid anymore
+                        // TODO: make a refresh token schema or something clever
+                        commit('changeToken', '');
+                        throw new Error('JWT token has expired');
+                    }
+                    return r;
+                })
+                .catch((e) => {
+                    console.log(e);
+                })
                 .then(r => r.json())
                 .then((r) => {
-                    console.log(r);
+                    commit('setUser', r.user);
+                    return r.user;
                 });
         }
     }

@@ -23,11 +23,12 @@
         mounted: function () {
             this.post('category/read').then((r) => {
                 this.$store.commit('setCategories', r.categories);
-            })
+            });
 
             let jwt = localStorage.getItem('jwt');
-            if (jwt) {
+            if (jwt && jwt.length > 0) {
                 this.$store.commit('changeToken', jwt);
+                this.$store.dispatch('updateUserProfile');
             }
         }
     }
