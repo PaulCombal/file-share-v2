@@ -64,7 +64,11 @@
                     'google-jwt': jwt
                 };
 
-                this.doRequestLoginGoogle(postdata);
+                this.doRequestLoginGoogle(postdata).then((success) => {
+                    if (success) {
+                        this.$router.go(-1);
+                    }
+                });
             },
             onRegister: function (googleUser) {
                 this.disabled = true;
@@ -114,6 +118,11 @@
                 },
                 googleRegisterUsername: '',
                 disabled: false
+            }
+        },
+        mounted: function () {
+            if (this.$store.getters.user.id) {
+                this.$router.push({name: 'show_user', params: {username: this.$store.getters.user.username}});
             }
         }
     }

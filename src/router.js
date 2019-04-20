@@ -23,11 +23,6 @@ export default new Router({
             component: Search
         },
         {
-            path: '/:id/:slug',
-            name: 'show_submission',
-            component: ShowSubmission
-        },
-        {
             path: '/u/:username',
             name: 'show_user',
             component: ShowUser
@@ -36,6 +31,11 @@ export default new Router({
             path: '/login',
             name: 'login',
             component: Login
+        },
+        {
+            path: '/:id/:slug',
+            name: 'show_submission',
+            component: ShowSubmission
         },
         {
             path: '/about',

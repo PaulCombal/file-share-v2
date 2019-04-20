@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        jwt_token: '',
+        jwt_token: localStorage.getItem('jwt'),
         show_search: false,
         user: {},
         categories: []
@@ -30,6 +30,10 @@ export default new Vuex.Store({
         user: state => state.user
     },
     actions: {
+        doLogout({commit}) {
+            localStorage.jwt = '';
+            commit('setUser', {});
+        },
         doRequestLoginGoogle({commit, getters, dispatch}, postdata) {
             const init = {
                 method: 'POST',
@@ -56,6 +60,13 @@ export default new Vuex.Store({
             ;
         },
         updateUserProfile({commit, getters}) {
+            const jwt = localStorage.getItem('jwt');
+            if (!jwt || jwt.length === 0) {
+                return new Promise((resolve) => {
+                    resolve({});
+                })
+            }
+
             let headers = new Headers();
             headers.append('Authorization', getters.auth_header);
             const init = {
@@ -65,22 +76,27 @@ export default new Vuex.Store({
             };
 
             return fetch(getters.api_base + 'profile/readmine', init)
+                .then(r => r.json())
                 .then((r) => {
-                    if (r.status === 401) {
+                    if (r.code === 401) {
+                        if (r.message === "JWT Token not found") {
+                            throw new Error("Server said JWT token not found.");
+                        }
                         // JWT is not valid anymore
                         // TODO: make a refresh token schema or something clever
                         commit('changeToken', '');
-                        throw new Error('JWT token has expired');
+                        localStorage.jwt = '';
+                        throw new Error(JSON.stringify(r));
                     }
                     return r;
                 })
-                .catch((e) => {
-                    console.log(e);
-                })
-                .then(r => r.json())
                 .then((r) => {
                     commit('setUser', r.user);
                     return r.user;
+                })
+                .catch((e) => {
+                    console.log(e);
+                    return {};
                 });
         }
     }

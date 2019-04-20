@@ -11,7 +11,10 @@
         </div>
 
         <div class="flex-1 text-right">
-            <router-link to="/login">
+            <router-link :to="'/u/' + $store.getters.user.username" v-if="$store.getters.user.id">
+                <i class="fa fa-user mr-1"></i> {{ $store.getters.user.username }} ({{ $store.getters.user.karma }})
+            </router-link>
+            <router-link to="/login" v-else>
                 <i class="fa fa-user mr-1"></i> Espace personnel
             </router-link>
         </div>
