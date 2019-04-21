@@ -11,9 +11,14 @@
         </div>
 
         <div class="flex-1 text-right">
-            <router-link :to="'/u/' + $store.getters.user.username" v-if="$store.getters.user.id">
-                <i class="fa fa-user mr-1"></i> {{ $store.getters.user.username }} ({{ $store.getters.user.karma }})
-            </router-link>
+            <div v-if="$store.getters.user.id">
+                <router-link :to="'/'" class="mr-3">
+                    <i class="fa fa-plus-square mr-1"></i> Partager
+                </router-link>
+                <router-link :to="'/u/' + $store.getters.user.username">
+                    <i class="fa fa-user mr-1"></i> {{ $store.getters.user.username }} ({{ $store.getters.user.karma }})
+                </router-link>
+            </div>
             <router-link to="/login" v-else>
                 <i class="fa fa-user mr-1"></i> Espace personnel
             </router-link>

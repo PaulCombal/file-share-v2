@@ -24,6 +24,25 @@
                 <button @click="endEditBio()"><i class="fa fa-save"></i> Enregistrer</button>
             </div>
         </div>
+        <div class="row mt-4">
+            <div class="col">
+                <h2 class="title">Médailles</h2>
+                <div class="text-muted">
+                    <i class="fa fa-clock"></i> Cette fonctionnalité sera prochainement disponible!
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col">
+                <h2 class="title">Publications</h2>
+                <div class="text-muted" v-if="submissions.length === 0">
+                    <i class="fa fa-box-open"></i> Aucune publication pour cet utilisateur
+                </div>
+                <div v-for="s in submissions" :key="s.id">
+
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -52,7 +71,6 @@
             endEditBio: function () {
                 this.lockEdition = true;
                 this.post('profile/edit').then((r) => {
-                    console.log(r);
                     this.lockEdition = false;
                     this.editingBio = false;
                 }).catch((e) => {
@@ -73,6 +91,7 @@
                 this.submissions = r.submissions;
                 if (r.user.id === this.currentUser.id) {
                     this.isCurrentUser = true;
+                    this.$store.commit('setUser', r.user);
                 }
                 this.loading = false;
             })
