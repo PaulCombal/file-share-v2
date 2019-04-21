@@ -38,17 +38,17 @@
                 <div class="text-muted" v-if="submissions.length === 0">
                     <i class="fa fa-box-open"></i> Aucune publication pour cet utilisateur
                 </div>
-                <div v-for="s in submissions" :key="s.id">
-
-                </div>
+                <SubmissionList :error="false" :loading="loading" :submissions="submissions" v-else/>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import SubmissionList from "../components/SubmissionList";
     export default {
         name: "ShowUser",
+        components: {SubmissionList},
         data: function () {
             return {
                 loading: true,

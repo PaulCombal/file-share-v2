@@ -25,46 +25,24 @@
         </div>
         <div class="row">
             <div class="col">
-                <div v-if="loading" class="text-center">
-                    <i class="fa fa-circle-notch fa-spin"></i>
-                </div>
-                <div v-if="!loading && error" class="text-center">
-                    <i class="fa fa-exclamation-triangle mr-1"></i> Une erreur est survenue.. Veuillez réessayer plus tard.
-                </div>
-                <div v-if="!loading && !error">
-                    <div v-if="results.length === 0" class="text-center text-muted">
-                        <i class="fa fa-box-open mr-1"></i> Aucun résultat!
-                    </div>
-                    <div v-for="r in results" :key="r.id" class="search-result">
-                        <router-link :to="'/' + r.id + '/' + r.slug">
-                            {{ r.title }} <i v-if="r.verified" class="fa fa-check ml-1"
-                                             title="Manuellement vérifié comme étant valide"></i>
-                        </router-link>
-                        <div class="text-muted">
-                            {{ r.description }}
-                        </div>
-                        <div class="text-muted-muted">
-                            <small>
-                                <strong>{{ r.karma || '??' }}</strong> karma - Dans {{ readableCategories(r.category, r.parent_category) }}
-                            </small>
-                        </div>
-                    </div>
-                </div>
+                <SubmissionList :loading="loading" :error="error" :submissions="results"/>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import SubmissionList from "../components/SubmissionList";
     export default {
         name: "Search",
+        components: {SubmissionList},
         data: function () {
             return {
                 loading: true,
                 error: false,
                 query: this.$route.query.q,
                 category: this.$route.query.category || null,
-                verifiedOnly: this.$route.query.verifiedOnly || false,
+                verifiedOnly: this.$route.query.verifiedOnly === "false" || false,
                 results: []
             };
         },
@@ -110,17 +88,5 @@
 </script>
 
 <style lang="scss" scoped>
-    .search-result {
-        &:nth-child(odd) {
-            background: #f9f9fb;
 
-        }
-
-        padding: 10px;
-        margin-bottom: 10px;
-    }
-
-    .text-muted-muted {
-        color: #ada8bb;
-    }
 </style>
