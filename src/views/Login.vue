@@ -4,11 +4,11 @@
             <div class="col-md-6">
                 <h2 class="title">CONNEXION</h2>
                 <div>
-                    <input class="my-1 px-2" placeholder="Username" :disabled="disabled" autofocus/>
+                    <input class="my-1 px-2" placeholder="Username" :disabled="disabled" v-model="loginUsername" autofocus/>
                     <br/>
-                    <input class="my-1 px-2" placeholder="Mot de passe" :disabled="disabled"/>
+                    <input type="password" class="my-1 px-2" placeholder="Mot de passe" v-model="loginPassword" :disabled="disabled"/>
                     <br/>
-                    <input class="mt-2" type="submit" value="Connexion" :disabled="disabled"/>
+                    <input class="mt-2" type="submit" value="Connexion" :disabled="disabled" @click="onManualLogin()"/>
                 </div>
                 <div class="my-3">- OU -</div>
                 <GoogleLogin class="btn google-button d-flex align-items-center" :onSuccess="onSignIn" :params="params"><img src="../assets/g-logo.png" height="20" width="20" class="mr-2"/> Connexion avec Google</GoogleLogin>
@@ -49,7 +49,7 @@
         name: "Login",
         components: {GoogleLogin},
         methods: {
-            ...mapActions(['doRequestLoginGoogle']),
+            ...mapActions(['doRequestLoginGoogle', 'doLogin']),
             onSignIn: function (googleUser) {
                 this.disabled = true;
                 let profile = googleUser.getBasicProfile();
@@ -109,6 +109,13 @@
                     }
                     console.log(r);
                 })
+            },
+            onManualLogin: function() {
+                this.doLogin({username: this.loginUsername, password: this.loginPassword}).then((success) => {
+                    if (success) {
+                        this.$router.go(-1);
+                    }
+                });
             }
         },
         data: function () {
@@ -117,6 +124,8 @@
                     client_id: "69926499564-ahrpirp0anl3fjlqlppkmq53ou2tkobk.apps.googleusercontent.com",
                 },
                 googleRegisterUsername: '',
+                loginUsername: '',
+                loginPassword: '',
                 disabled: false
             }
         },

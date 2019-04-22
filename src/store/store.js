@@ -30,6 +30,34 @@ export default new Vuex.Store({
         user: state => state.user
     },
     actions: {
+        doLogin({commit, getters, dispatch}, credentials) {
+            let headers = new Headers();
+            headers.append('content-type', 'application/json');
+            const init = {
+                method: 'POST',
+                mode: 'cors',
+                headers,
+                body: JSON.stringify(credentials)
+            };
+            return fetch(getters.api_base + 'login', init)
+                .then(r => r.json())
+                .then((r) => {
+                    if (!r.token) {
+                        throw new Error(JSON.stringify(r));
+                    }
+
+                    // TODO: Security. Do not Set the token in localStorage but in a HTTP Cookie.
+                    localStorage.jwt = r.token;
+                    commit('changeToken', r.token);
+                    dispatch('updateUserProfile');
+                    return true;
+                })
+                .catch((e) => {
+                    alert('Une erreur est survenue. Vérifiez votre saisie, réessayez plus tard, ou inscrivez-vous si ce n\'est pas déjà fait!');
+                    console.log(e);
+                    return false;
+                })
+        },
         doLogout({commit}) {
             localStorage.jwt = '';
             commit('setUser', {});
