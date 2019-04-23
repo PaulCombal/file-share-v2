@@ -22,15 +22,15 @@
                     En créant un compte, vous déclarez être d'accord avec nos conditions d'utilisation
                 </div>
                 <div class="mt-2">
-                    <input class="my-1 px-2" placeholder="Username" :disabled="disabled"/>
+                    <input class="my-1 px-2" placeholder="Username" v-model="registerUsername" :disabled="disabled"/>
                     <br/>
-                    <input class="my-1 px-2" placeholder="Email (facultatif)" type="email" :disabled="disabled"/>
+                    <input class="my-1 px-2" placeholder="Email (facultatif)" type="email" v-model="registerEmail" :disabled="disabled"/>
                     <br/>
-                    <input class="my-1 px-2" placeholder="Mot de passe" type="password" :disabled="disabled"/>
+                    <input class="my-1 px-2" placeholder="Mot de passe" type="password" v-model="registerPassword" :disabled="disabled"/>
                     <br/>
-                    <input class="my-1 px-2" placeholder="Confirmation mot de passe" type="password" :disabled="disabled"/>
+                    <input class="my-1 px-2" placeholder="Confirmation mot de passe" type="password" v-model="registerPasswordConfirm" :disabled="disabled"/>
                     <br/>
-                    <input class="mt-2" type="submit" value="Créer mon compte" :disabled="disabled"/>
+                    <input class="mt-2" type="submit" value="Créer mon compte" @click="onManualRegister()" :disabled="disabled"/>
                 </div>
                 <div class="my-2">- OU -</div>
                 <input class="mb-2 px-2" placeholder="Username" maxlength="25" v-model="googleRegisterUsername" :disabled="disabled"/>
@@ -44,6 +44,39 @@
 <script>
     import GoogleLogin from "vue-google-login/src/GoogleLogin";
     import {mapActions} from 'vuex';
+
+    // Checks if a username is suitable for the site
+    function correctUsername(username) {
+        switch (true) {
+            case username.length < 3:
+            case username.length > 25:
+                alert('Votre nom d\'utilisateur doit faire entre 3 et 25 caractères');
+                return false;
+
+            case !/^([a-z0-9]|[_-])+$/i.test(username):
+                alert('Votre nom d\'utilisateur contient des lettres non autorisées. Seuls les lettres non accentuées, chiffres, underscores et tirets sont admis.');
+                return false;
+
+            default:
+                return true;
+        }
+    }
+
+    function correctPasswords(one, two) {
+        switch (true) {
+            case one.length < 5:
+            case one.length > 25:
+                alert('Votre mot de passe doit faire entre 5 et 25 caractères.');
+                return false;
+
+            case one !== two:
+                alert('Votre saisie dans la confirmation de mot de passe ne correspond pas à celle du mot de passe.');
+                return false;
+
+            default:
+                return true;
+        }
+    }
 
     export default {
         name: "Login",
@@ -90,11 +123,11 @@
                 if (nameLength === 0) {
                     alert('Veuillez inscrire un  nom d\'utilisateur, même si vous vous inscrivez avec Google!');
                     return;
-                } else if (nameLength < 3 || nameLength > 25) {
-                    alert('Votre nom d\'utilisateur doit faire entre 3 et 25 lettres');
+                }
+
+                if (!correctUsername(postdata.username)) {
                     return;
                 }
-                // TODO check for illegal characters: <, >, ,,, ", ',...
 
                 this.post('register/with-google', postdata).then((r) => {
                     this.disabled = false;
@@ -116,6 +149,48 @@
                         this.$router.go(-1);
                     }
                 });
+            },
+            onManualRegister: function () {
+                // Validate
+                if (!correctUsername(this.registerUsername)) {
+                    return;
+                }
+
+                if (this.registerEmail.length > 0 && !/\S+@\S+\.\S+/.test(this.registerEmail))  {
+                    alert('Votre adresse mail ne semble pas être au bon format. Vous n\'êtes pas obligé(e) de la renseigner.');
+                    return;
+                }
+
+                if (!correctPasswords(this.registerPassword, this.registerPasswordConfirm)) {
+                    return;
+                }
+
+                const postdata = {
+                    user_registration: {
+                        username: this.registerUsername,
+                        email: this.registerEmail,
+                        plainPassword: {
+                            first: this.registerPassword,
+                            second: this.registerPasswordConfirm
+                        }
+                    }
+                };
+
+                this.disabled =  true;
+                this.post('register', postdata).then((r) => {
+                    if (!r.success) {
+                        alert('Une erreur s\'est produite lors de la création de votre compte. Vérifiez le formulaire ou réésayez plus tard.');
+                        console.log(r);
+                        return;
+                    }
+
+                    alert('Votre compte a été créé avec succès! Vous pouvez vous connecter dès maintenant.')
+                }).catch((e) => {
+                    alert('Une erreur s\'est produite lors de la création de votre compte. Veuillez réésayer plus tard.');
+                    console.log(e);
+                }).finally(() => {
+                    this.disabled = false;
+                })
             }
         },
         data: function () {
@@ -126,6 +201,10 @@
                 googleRegisterUsername: '',
                 loginUsername: '',
                 loginPassword: '',
+                registerUsername: '',
+                registerEmail: '',
+                registerPassword: '',
+                registerPasswordConfirm: '',
                 disabled: false
             }
         },
