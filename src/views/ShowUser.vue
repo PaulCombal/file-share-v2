@@ -65,12 +65,23 @@
             }
         },
         methods: {
+            refreshData: function() {
+                this.post('profile/read/' + this.$route.params.username).then((r) => {
+                    this.user = r.user;
+                    this.submissions = r.submissions;
+                    if (r.user.id === this.currentUser.id) {
+                        this.isCurrentUser = true;
+                        this.$store.commit('setUser', r.user);
+                    }
+                    this.loading = false;
+                })
+            },
             startEditBio: function () {
                 this.editingBio = true;
             },
             endEditBio: function () {
                 this.lockEdition = true;
-                this.post('profile/edit').then((r) => {
+                this.post('profile/edit').then((r) => { // TODO make this pseudocode work
                     this.lockEdition = false;
                     this.editingBio = false;
                 }).catch((e) => {
@@ -83,18 +94,13 @@
         watch: {
             currentUser(theNew/*, theOld*/) {
                 this.isCurrentUser = this.user.id === theNew.id;
+            },
+            '$route.params.username': function () {
+                this.refreshData();
             }
         },
         mounted: function () {
-            this.post('profile/read/' + this.$route.params.username).then((r) => {
-                this.user = r.user;
-                this.submissions = r.submissions;
-                if (r.user.id === this.currentUser.id) {
-                    this.isCurrentUser = true;
-                    this.$store.commit('setUser', r.user);
-                }
-                this.loading = false;
-            })
+            this.refreshData();
         }
     }
 </script>
