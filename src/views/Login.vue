@@ -144,7 +144,9 @@
                 })
             },
             onManualLogin: function() {
+                this.disabled = false;
                 this.doLogin({username: this.loginUsername, password: this.loginPassword}).then((success) => {
+                    this.disabled = false;
                     if (success) {
                         this.$router.go(-1);
                     }
