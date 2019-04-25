@@ -69,32 +69,43 @@ export default new Vuex.Store({
             commit('setUser', {});
         },
         doRequestLoginGoogle({commit, getters, dispatch}, postdata) {
+            const errormessage = 'Une erreur est survenue. Réessayez plus tard, ou inscrivez-vous si ce n\'est pas déjà fait!';
+
             const init = {
                 method: 'POST',
                 mode: 'cors',
-                body: JSON.stringify(postdata)
+                body: JSON.stringify(postdata),
+                credentials: 'include'
             };
 
             return fetch(getters.api_base + 'login/with-google', init)
-                .then(r => r.json())
                 .then((r) => {
-                    if (!r.token) {
-                        alert('Une erreur est survenue. Réessayez plus tard, ou inscrivez-vous si ce n\'est pas déjà fait!');
-                        return false;
+                    if (!r.ok) {
+                        alert(errormessage);
+                        throw new Error('Server answered with HTTP ' + r.status + ' for login with google');
+                    }
+                    return r.json();
+                })
+                .then((r) => {
+                    if (!r.success) {
+                        alert(errormessage);
+                        throw new Error('Error login with google: ' + JSON.stringify(r));
                     }
 
                     console.log('Logged in with Google');
 
-                    // TODO: Security. Do not Set the token in localStorage but in a HTTP Cookie.
-                    localStorage.jwt = r.token;
-                    commit('changeToken', r.token);
+                    commit('changeLogged', true);
                     dispatch('updateUserProfile');
                     return true;
+                })
+                .catch((e) => {
+                    console.error(e);
                 })
             ;
         },
         updateUserProfile({commit, getters}) {
             if (!getters.logged) {
+                commit('changeLogged', false);
                 return new Promise((resolve) => {
                     resolve({});
                 })
@@ -117,6 +128,7 @@ export default new Vuex.Store({
                     return r;
                 })
                 .then((r) => {
+                    commit('changeLogged', true);
                     commit('setUser', r.user);
                     return r.user;
                 })

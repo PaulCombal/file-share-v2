@@ -25,9 +25,9 @@
                 this.$store.commit('setCategories', r.categories);
             });
 
-            let jwt = localStorage.getItem('jwt');
-            if (jwt && jwt.length > 0) {
-                this.$store.commit('changeToken', jwt);
+            let logged = localStorage.getItem('logged');
+            if (logged) {
+                this.$store.commit('changeLogged', true);
                 this.$store.dispatch('updateUserProfile');
             }
         }

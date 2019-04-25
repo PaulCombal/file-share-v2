@@ -101,10 +101,11 @@
                     if (success) {
                         this.$router.go(-1);
                     }
+                }).finally(() => {
+                    this.disabled = false;
                 });
             },
             onRegister: function (googleUser) {
-                this.disabled = true;
                 let profile = googleUser.getBasicProfile();
                 const jwt = googleUser.getAuthResponse().id_token;
                 console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
@@ -129,18 +130,16 @@
                     return;
                 }
 
+                this.disabled = true;
                 this.post('register/with-google', postdata).then((r) => {
-                    this.disabled = false;
                     if (r.success) {
                         this.googleRegisterUsername = '';
                         alert('Votre compte a été créé! Vous pouvez dès maintenant vous connecter avec le bouton de connexion Google!');
-                        return;
-                    }
-                    if (r.error === 5) {
+                    } else if (r.error === 5) {
                         alert('Il semblerait que ce nom d\'utilisateur ou compte Google soit déjà utilisé. Essayez de vous connecter, ou choisissez un autre pseudo!');
-                        return;
                     }
-                    console.log(r);
+                }).finally(() => {
+                    this.disabled = false;
                 })
             },
             onManualLogin: function() {
