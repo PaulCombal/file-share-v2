@@ -6,7 +6,10 @@
         <div class="row">
             <div class="col">
                 <h2 class="title d-inline-block">{{ user.username }}</h2>
-                <span class="float-right" v-if="isCurrentUser"><button @click="$store.dispatch('doLogout')"><i class="fa fa-door-open"></i> Déconnection</button></span>
+                <span class="float-right" v-if="isCurrentUser">
+                    <i class="fa fa-spin fa-circle-notch" v-if="loadingLogout"></i>
+                    <button @click="queryDisconnect()" v-else><i class="fa fa-door-open"></i> Déconnection</button>
+                </span>
                 <hr/>
             </div>
         </div>
@@ -52,6 +55,7 @@
         data: function () {
             return {
                 loading: true,
+                loadingLogout: false,
                 lockEdition: false,
                 user: {},
                 submissions: [],
@@ -82,12 +86,28 @@
             endEditBio: function () {
                 this.lockEdition = true;
                 this.post('profile/edit').then((r) => { // TODO make this pseudocode work
+                    if (!r.success) {
+                        throw new Error('response doesnt have r.success');
+                    }
+
                     this.lockEdition = false;
                     this.editingBio = false;
                 }).catch((e) => {
                     console.log(e);
                     alert('Une erreur est survenue lors de l\'enregistrement de vos modifications.. Veuillez réésayer plus tard');
                     this.lockEdition = false;
+                })
+            },
+            queryDisconnect: function () {
+                this.loadingLogout = true;
+                this.post('logout').then((r) => {
+                    if (!r.success) {
+                        alert('ATTENTION: À cause de mesures de sécurité, nous n\'avons pas pu vous déconnecter. Effacez les données de navigation pour éviter tout vol de compte.')
+                    } else {
+                        this.$store.dispatch('doLogout');
+                    }
+                }).finally(() => {
+                    this.loadingLogout = false;
                 })
             }
         },
