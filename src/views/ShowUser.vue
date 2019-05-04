@@ -44,6 +44,12 @@
                 <SubmissionList :error="false" :loading="loading" :submissions="submissions" v-else/>
             </div>
         </div>
+        <div class="row mt-4" v-if="isCurrentUser">
+            <div class="col">
+                <h2 class="title">PARAMÈTRES</h2>
+                <div class="text-muted">Bientôt: saisir votre adresse mail, et suppression du compte!</div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -85,16 +91,19 @@
             },
             endEditBio: function () {
                 this.lockEdition = true;
-                this.post('profile/edit').then((r) => { // TODO make this pseudocode work
+                const postdata = {
+                    bio: this.user.bio
+                };
+                this.post('profile/editmine', postdata).then((r) => {
                     if (!r.success) {
                         throw new Error('response doesnt have r.success');
                     }
 
-                    this.lockEdition = false;
                     this.editingBio = false;
                 }).catch((e) => {
                     console.log(e);
                     alert('Une erreur est survenue lors de l\'enregistrement de vos modifications.. Veuillez réésayer plus tard');
+                }).finally(() => {
                     this.lockEdition = false;
                 })
             },

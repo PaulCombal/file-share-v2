@@ -12,7 +12,7 @@
 
         <div class="flex-1 text-right">
             <div v-if="$store.getters.user.id">
-                <router-link :to="'/'" class="mr-3">
+                <router-link :to="'/submit'" class="mr-3">
                     <i class="fa fa-plus-square mr-1"></i> Partager
                 </router-link>
                 <router-link :to="'/u/' + $store.getters.user.username">

@@ -5,6 +5,7 @@ import Search from './views/Search.vue'
 import ShowSubmission from './views/ShowSubmission'
 import ShowUser from './views/ShowUser'
 import Login from './views/Login'
+import Submit from './views/Submit'
 
 Vue.use(Router);
 
@@ -31,6 +32,11 @@ export default new Router({
             path: '/login',
             name: 'login',
             component: Login
+        },
+        {
+            path: '/submit',
+            name: 'submit',
+            component: Submit
         },
         {
             path: '/:id/:slug',

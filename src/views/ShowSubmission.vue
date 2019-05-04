@@ -72,11 +72,9 @@
         },
         methods: {
             downloadWithDesktop: function () {
-                // TODO: check for ipns/ links
                 document.location = 'ipfs://' + this.submission.hash;
             },
             downloadMirror: function () {
-                // TODO: check for ipns/ links
                 window.open('https://ipfs.io/ipfs/' + this.submission.hash, '_blank');
             },
             copyHash: function () {
