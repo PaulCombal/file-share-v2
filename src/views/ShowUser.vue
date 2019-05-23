@@ -5,11 +5,19 @@
     <div class="container" v-else>
         <div class="row">
             <div class="col">
-                <h2 class="title d-inline-block">{{ user.username }}</h2>
-                <span class="float-right" v-if="isCurrentUser">
-                    <i class="fa fa-spin fa-circle-notch" v-if="loadingLogout"></i>
-                    <button @click="queryDisconnect()" v-else><i class="fa fa-door-open"></i> Déconnection</button>
-                </span>
+                <div class="d-flex">
+                    <h2 class="title d-inline-block mr-3">{{ user.username }}</h2>
+
+                    <span v-if="user.karma > 0" style="flex: 1" class="text-right">+ {{ user.karma }}</span>
+                    <span v-else-if="user.karma < 0" style="flex: 1" class="text-right">- {{ user.karma }}</span>
+                    <span v-else style="flex: 1" class="text-right">0</span>
+
+                    <span class="float-right" v-if="isCurrentUser">
+                        <i class="fa fa-spin fa-circle-notch" v-if="loadingLogout"></i>
+                        <button @click="queryDisconnect()" class="ml-3" v-else><i class="fa fa-door-open"></i> Déconnection</button>
+                    </span>
+                </div>
+
                 <hr/>
             </div>
         </div>

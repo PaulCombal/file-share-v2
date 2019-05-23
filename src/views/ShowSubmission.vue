@@ -98,6 +98,8 @@
                             name: 'show_submission',
                             params: {id: this.submission.id, slug: this.submission.slug}
                         });
+
+                    this.$store.dispatch('fetchCategories');
                 })
                 .catch(() => {
                     this.error = true;

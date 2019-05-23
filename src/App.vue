@@ -21,10 +21,6 @@
     export default {
         components: {TheHeader},
         mounted: function () {
-            this.post('category/read').then((r) => {
-                this.$store.commit('setCategories', r.categories);
-            });
-
             let logged = localStorage.getItem('logged');
             if (logged) {
                 this.$store.commit('changeLogged', true);

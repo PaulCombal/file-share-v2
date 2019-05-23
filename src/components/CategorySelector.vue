@@ -1,8 +1,10 @@
 <template>
     <select>
-        <option>
-
-        </option>
+        <optgroup :label="p" v-for="p in Object.keys(formattedCats)" :key="'main-' + p">
+            <option v-for="c in formattedCats[p]" :key="'sub' + c.id">
+                {{ c.name }}
+            </option>
+        </optgroup>
     </select>
 </template>
 
@@ -15,11 +17,24 @@
             }
         },
         mounted: function (){
-            const cats = this.$store.getters.categories;
-            let middle = []; // Avoid multiple renders
-            cats.forEach((e) => {
-                // TODO
-            })
+            this.$store.dispatch('fetchCategories').then((cats) => {
+                console.log('cats', cats);
+                let middle = {}; // Avoid multiple renders
+
+                // Init parent categories
+                cats.filter(x => x.parent === 0).forEach((c) => {
+                    middle[c.name] = [];
+                    middle[c.name].push(c);
+                });
+
+                // Fill children categories
+                cats.filter(x => x.parent > 0).forEach((c) => {
+                    const parent = cats.find(x => x.id = c.parent);
+                    middle[parent.name].push(c);
+                });
+
+                this.formattedCats = middle;
+            });
         }
     }
 </script>

@@ -8,7 +8,8 @@ export default new Vuex.Store({
         logged: Boolean(localStorage.getItem('logged')),
         show_search: false,
         user: {},
-        categories: []
+        categories: [],
+        categoriesFetched: false
     },
     mutations: {
         changeLogged(state, bool) {
@@ -21,6 +22,7 @@ export default new Vuex.Store({
         },
         setCategories(state, categories) {
             state.categories = categories;
+            state.categoriesFetched = true;
         },
         setUser(state, user) {
             state.user = user;
@@ -30,11 +32,21 @@ export default new Vuex.Store({
         show_search: state => state.show_search,
         api_base: () => 'http://localhost:8000/api/v1/',
         categories: state => state.categories,
+        categoriesFetched: state => state.categoriesFetched,
         user: state => state.user,
         logged: state => state.logged,
         fetchCredentials: state => state.logged ? 'include' : 'omit'
     },
     actions: {
+        async fetchCategories({ commit, getters }) {
+            if (!getters.categoriesFetched) {
+                const init = {method: 'POST'};
+                const cats = await fetch(getters.api_base + 'category/read', init).then(r => r.json());
+                await commit('setCategories', cats.categories);
+                return cats.categories;
+            }
+            return getters.categories;
+        },
         doLogin({commit, getters, dispatch}, credentials) {
             const init = {
                 method: 'POST',
